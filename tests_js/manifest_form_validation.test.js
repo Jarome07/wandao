@@ -12,7 +12,7 @@ test('manifest fields expose native constraints and an adjacent accessible error
   assert.match(renderer, /'required', 'aria-required="true"'/);
   assert.match(renderer, /field\.max !== undefined/);
   assert.match(renderer, /class="form-field-error"[^>]*role="alert" hidden/);
-  assert.match(renderer, /aria-describedby="\$\{manifestFieldErrorId\(provider, field\)\}"/);
+  assert.match(renderer, /const describedBy = options\.describedBy \|\| manifestFieldErrorId\(provider, field\)/);
 });
 
 test('manifest action validation marks, announces, focuses, and clears field errors', () => {
@@ -41,12 +41,13 @@ test('manifest action validation marks, announces, focuses, and clears field err
 });
 
 test('manifest fields render help text under the control with accessible association', () => {
-  const renderer = appJs.slice(appJs.indexOf('function renderManifestFieldHelp'), appJs.indexOf('function renderManifestProviderForm'));
+  const renderer = appJs.slice(appJs.indexOf('function manifestFieldInputAttributes'), appJs.indexOf('function renderManifestProviderForm'));
 
   assert.match(renderer, /function renderManifestFieldHelp\(provider, field\)/);
   assert.match(renderer, /field\.help \|\| ''/);
   assert.match(renderer, /class="field-hint" id="\$\{manifestFieldId\(provider, field\)\}-help"/);
-  assert.match(renderer, /aria-describedby="\$\{describedBy\}"/);
+  assert.match(renderer, /const describedBy = \[manifestFieldErrorId\(provider, field\)/);
+  assert.match(renderer, /options\.describedBy \|\| manifestFieldErrorId/);
   // checkbox / select / directory / text 各分支都要输出 help
   assert.ok((renderer.match(/\$\{helpHtml\}/g) || []).length >= 4);
   assert.match(styles, /\.form-group-checkbox \.field-hint/);
